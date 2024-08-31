@@ -30,3 +30,11 @@ class DataPrepation:
         	for column_name in column_names:
             		df[column_name] = df[column_name].apply(self.format_gbp_currency)
         	return df
+
+	@staticmethod
+    	def convert_decimal_to_percentage_str(value: float) -> str:
+        	if math.isnan(value) == False:
+            		str_value = str(round(value * 100)) + "%"
+            		return str_value
+        	else:
+            		return value
