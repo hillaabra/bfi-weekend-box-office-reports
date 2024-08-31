@@ -38,3 +38,9 @@ class DataPrepation:
             		return str_value
         	else:
             		return value
+
+	def restore_string_formatting_to_percentage_values(self, df: pd.DataFrame, column_names: list[str]) -> pd.DataFrame:
+        	for column_name in column_names:
+            		df[column_name] = df[column_name].apply(lambda x: self.convert_decimal_to_percentage_str(x))
+        	return df
+
