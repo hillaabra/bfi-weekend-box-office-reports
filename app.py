@@ -19,3 +19,6 @@ app.layout = html.Div(children=[
         	dash_table.DataTable(data=top15_reformatted_df.to_dict('records'), page_size=15)
     	])
 ])
+
+if __name__ == "__main__":
+  app.run_server(debug=True)
