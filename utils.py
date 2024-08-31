@@ -55,3 +55,7 @@ class Top15(DataPreparation):
 
 	def __init__(self, excel_report_filepath):
         	super().__init__(excel_report_filepath)
+
+	def read_table_to_df(self):
+        	df_top15_raw = pd.read_excel(self.workbook, header=1, nrows=15)
+        	return df_top15_raw
