@@ -51,3 +51,7 @@ class DataPrepation:
         	return df_reformatted
 
 
+class Top15(DataPreparation):
+
+	def __init__(self, excel_report_filepath):
+        	super().__init__(excel_report_filepath)
