@@ -44,3 +44,10 @@ class DataPrepation:
             		df[column_name] = df[column_name].apply(lambda x: self.convert_decimal_to_percentage_str(x))
         	return df
 
+	def restore_original_formatting(self, df_table: pd.DataFrame) -> pd.DataFrame:
+        	df_reformatted = self.restore_string_formatting_to_gbp_values(df_table, self.gbp_value_columns)
+        	df_reformatted = self.restore_string_formatting_to_percentage_values(df_reformatted, self.percentage_value_columns)
+        	df_reformatted.fillna("-", inplace=True)
+        	return df_reformatted
+
+
