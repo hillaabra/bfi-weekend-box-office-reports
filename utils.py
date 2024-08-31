@@ -25,3 +25,8 @@ class DataPrepation:
 
 		str_value_with_commas = insert_commas(str_value, counter=0)
 		return "£" + str_value_with_commas
+
+	def restore_string_formatting_to_gbp_values(self, df: pd.DataFrame, column_names: list[str]) -> pd.DataFrame:
+        	for column_name in column_names:
+            		df[column_name] = df[column_name].apply(self.format_gbp_currency)
+        	return df
