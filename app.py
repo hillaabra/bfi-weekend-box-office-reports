@@ -1,6 +1,6 @@
 from dash import Dash, dash_table, dcc, html, Input, Output
 
-from dash_styling import produce_dash_table_with_common_styling
+from dash_styling import create_paragraphs_from_list_of_comments, produce_dash_table_with_common_styling
 from utils import DataPreparation
 from excel_parser import ExcelParser
 
@@ -43,16 +43,27 @@ app.layout = html.Div(children=[
         html.H2("""
             Top 15 Highest-Grossing Films
         """),
+
+				dcc.Markdown("""
+						*Note: 'Weekend Gross' figures will include Previews where applicable. See Comments section below for more detail.*
+           """
+					 ),
+
         produce_dash_table_with_common_styling(top15_reformatted_df),
 
 				html.Div(id="comments", children=[
 						html.H3("""
-								Comments
+								Comments on this week's top 15 results
 						"""),
 
-						html.P("""
-							'Weekend gross' figures include Previews. Comments below for more detail.
-						""")
+						html.Div(create_paragraphs_from_list_of_comments(excel_parser.list_of_comments_on_top_15_result)),
+
+						html.H4(
+							"""
+"""
+						)
+
+
 		])
     ], style={"display": "block"}),
 
