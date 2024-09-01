@@ -14,6 +14,8 @@ UK_films_in_top15_df = excel_parser.filter_for_UK_films(top15_reformatted_df)
 new_releases_in_top15_df = excel_parser.filter_for_new_releases(top15_reformatted_df)
 other_uk_films_df = excel_parser.other_uk_films_df
 other_uk_films_reformatted_df = data_preparer.restore_original_formatting(other_uk_films_df)
+other_new_releases_df = excel_parser.other_new_releases_df
+other_new_releases_reformatted_df = data_preparer.restore_original_formatting(other_new_releases_df)
 
 app.layout = html.Div(children=[
     html.H1(children=excel_parser.report_heading),
@@ -24,7 +26,8 @@ app.layout = html.Div(children=[
             {"label": "Top 15 Highest Grossing Films", "value": "top-15"},
             {"label": "UK Films in the Top 15", "value": "uk-in-top-15"},
             {"label": "New Releases in the Top 15", "value": "new-releases-in-top-15"},
-            {"label": "Other UK Films", "value": "other-uk-films"}
+            {"label": "Other UK Films", "value": "other-uk-films"},
+            {"label": "Other New Releases", "value": "other-new-releases"}
         ],
         value="top-15",
         clearable=False
@@ -69,6 +72,14 @@ app.layout = html.Div(children=[
         """),
         dash_table.DataTable(data=other_uk_films_reformatted_df.to_dict('records'))
     ], style={"display": "none"}
+    ),
+
+		html.Div(id="other-new-releases", children=[
+        html.H2("""
+            Other New Releases
+        """),
+        dash_table.DataTable(data=other_new_releases_reformatted_df.to_dict('records'))
+    ], style={"display": "none"}
     )
 ])
 
@@ -76,25 +87,29 @@ app.layout = html.Div(children=[
     [Output("top-15", "style"),
      Output("uk-in-top-15", "style"),
      Output("new-releases-in-top-15", "style"),
-     Output("other-uk-films", "style")],
+     Output("other-uk-films", "style"),
+			Output("other-new-releases", "style")],
      [Input("div-selector", "value")]
 )
 def toggle_dataset_visibility(selected_div) -> tuple:
-    top15_style = {"display": "none"}
-    ukintop15_style = {"display": "none"}
-    newreleasesintop15_style = {"display": "none"}
-    otherukfilms_style = {"display": "none"}
+	top15_style = {"display": "none"}
+	ukintop15_style = {"display": "none"}
+	newreleasesintop15_style = {"display": "none"}
+	otherukfilms_style = {"display": "none"}
+	othernewreleases_style = {"display": "none"}
 
-    if selected_div == "top-15":
-        top15_style = {"display": "block"}
-    elif selected_div == "uk-in-top-15":
-        ukintop15_style = {"display": "block"}
-    elif selected_div == "new-releases-in-top-15":
-        newreleasesintop15_style = {"display": "block"}
-    elif selected_div == "other-uk-films":
-        otherukfilms_style = {"display": "block"}
+	if selected_div == "top-15":
+			top15_style = {"display": "block"}
+	elif selected_div == "uk-in-top-15":
+			ukintop15_style = {"display": "block"}
+	elif selected_div == "new-releases-in-top-15":
+			newreleasesintop15_style = {"display": "block"}
+	elif selected_div == "other-uk-films":
+			otherukfilms_style = {"display": "block"}
+	elif selected_div == "other-new-releases":
+			othernewreleases_style = {"display": "block"}
 
-    return top15_style, ukintop15_style, newreleasesintop15_style, otherukfilms_style
+	return top15_style, ukintop15_style, newreleasesintop15_style, otherukfilms_style, othernewreleases_style
 
 if __name__ == "__main__":
     app.run(debug=True)
