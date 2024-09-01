@@ -17,8 +17,10 @@ class ExcelParser:
       self.total_top_15_weekend_gross = self._get_top_15_weekend_gross()
       self.total_top_15_gross_to_date = self._get_top_15_total_gross_to_date()
       self._check_for_change_in_footnotes_below_top_15_table() # to check layout is as expected before continuing to read second table
-      self.end_boundary_of_other_uk_films = self._find_end_of_other_uk_films_table()
+      self.end_boundary_of_other_uk_films_table = self._find_end_of_other_uk_films_table()
+      self.end_boundary_of_other_new_releases_table = self._find_end_of_other_new_releases_table()
       self.other_uk_films_df = self._read_other_uk_films_table_to_df()
+      self.other_new_releases_df = self._read_other_new_releases_table_to_df()
 
     def _read_top_15_table_to_df(self):
       df_top15 = pd.read_excel(self.workbook, header=1, nrows=15)
@@ -64,10 +66,29 @@ class ExcelParser:
                  return row_index
 
     def _read_other_uk_films_table_to_df(self) -> pd.DataFrame:
-        index_of_empty_row_after_table = self.end_boundary_of_other_uk_films
+        index_of_empty_row_after_table = self.end_boundary_of_other_uk_films_table
         num_rows = index_of_empty_row_after_table - 21
         df_other_uk_films = pd.read_excel(self.workbook, skiprows=21, nrows=num_rows, header=None, names=self.column_names)
         return df_other_uk_films
+
+    def _find_end_of_other_new_releases_table(self) -> int:
+       expected_row_ind_of_table_header = self.end_boundary_of_other_uk_films_table + 1
+
+         # Checking for "Other new releases" table header in the next two rows after end of Other UK films table
+       if "Other new releases" not in self.excel_sheet.row_values(expected_row_ind_of_table_header):
+           raise ValueError("Program is written to expect 'Other new releases' header two rows after 'Other UK Films' table ends.\
+                            String value not found in this row. Check document layout.")
+       else:
+           for row_index in range(expected_row_ind_of_table_header + 1, self.excel_sheet.nrows):
+              if self._check_for_empty_row(row_index):
+                 return row_index
+
+    def _read_other_new_releases_table_to_df(self) -> pd.DataFrame:
+        index_of_empty_row_after_new_releases_table = self.end_boundary_of_other_new_releases_table
+        index_of_starting_row_of_new_releases_table = self.end_boundary_of_other_uk_films_table + 2 # this approach would have to be altered if the layout were to ever vary
+        num_rows = index_of_empty_row_after_new_releases_table - index_of_starting_row_of_new_releases_table
+        df_other_new_releases = pd.read_excel(self.workbook, skiprows=index_of_starting_row_of_new_releases_table-1, nrows=num_rows, header=None, names=self.column_names)
+        return df_other_new_releases
 
     @staticmethod
     def filter_for_UK_films(df_top_15: pd.DataFrame) -> pd.DataFrame:
