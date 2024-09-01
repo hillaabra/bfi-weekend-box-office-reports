@@ -16,6 +16,7 @@ other_uk_films_df = excel_parser.other_uk_films_df
 other_uk_films_reformatted_df = data_preparer.restore_original_formatting(other_uk_films_df)
 other_new_releases_df = excel_parser.other_new_releases_df
 other_new_releases_reformatted_df = data_preparer.restore_original_formatting(other_new_releases_df)
+openers_next_week_df = excel_parser.openers_next_week_df
 
 app.layout = html.Div(children=[
     html.H1(children=excel_parser.report_heading),
@@ -27,7 +28,8 @@ app.layout = html.Div(children=[
             {"label": "UK Films in the Top 15", "value": "uk-in-top-15"},
             {"label": "New Releases in the Top 15", "value": "new-releases-in-top-15"},
             {"label": "Other UK Films", "value": "other-uk-films"},
-            {"label": "Other New Releases", "value": "other-new-releases"}
+            {"label": "Other New Releases", "value": "other-new-releases"},
+						{"label": "Openers Next Week", "value": "openers-next-week"}
         ],
         value="top-15",
         clearable=False
@@ -80,6 +82,14 @@ app.layout = html.Div(children=[
         """),
         dash_table.DataTable(data=other_new_releases_reformatted_df.to_dict('records'))
     ], style={"display": "none"}
+    ),
+
+		html.Div(id="openers-next-week", children=[
+        html.H2("""
+            Openers Next Week
+        """),
+        dash_table.DataTable(data=openers_next_week_df.to_dict('records'))
+    ], style={"display": "none"}
     )
 ])
 
@@ -88,7 +98,8 @@ app.layout = html.Div(children=[
      Output("uk-in-top-15", "style"),
      Output("new-releases-in-top-15", "style"),
      Output("other-uk-films", "style"),
-			Output("other-new-releases", "style")],
+		 Output("other-new-releases", "style"),
+		 Output("openers-next-week", "style")],
      [Input("div-selector", "value")]
 )
 def toggle_dataset_visibility(selected_div) -> tuple:
@@ -97,6 +108,7 @@ def toggle_dataset_visibility(selected_div) -> tuple:
 	newreleasesintop15_style = {"display": "none"}
 	otherukfilms_style = {"display": "none"}
 	othernewreleases_style = {"display": "none"}
+	openersnextweek_style = {"display": "none"}
 
 	if selected_div == "top-15":
 			top15_style = {"display": "block"}
@@ -108,8 +120,10 @@ def toggle_dataset_visibility(selected_div) -> tuple:
 			otherukfilms_style = {"display": "block"}
 	elif selected_div == "other-new-releases":
 			othernewreleases_style = {"display": "block"}
+	elif selected_div == "openers-next-week":
+			openersnextweek_style = {"display": "block"}
 
-	return top15_style, ukintop15_style, newreleasesintop15_style, otherukfilms_style, othernewreleases_style
+	return top15_style, ukintop15_style, newreleasesintop15_style, otherukfilms_style, othernewreleases_style, openersnextweek_style
 
 if __name__ == "__main__":
     app.run(debug=True)
