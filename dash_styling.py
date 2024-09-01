@@ -1,4 +1,4 @@
-from dash import dash_table
+from dash import dash_table, html
 
 
 def produce_dash_table_with_common_styling(df):
@@ -37,3 +37,15 @@ def produce_dash_table_with_common_styling(df):
 		],
 		fixed_rows={"headers": True},
 	)
+
+def create_paragraphs_from_list_of_comments(comments_list):
+  paragraphs_for_dash = []
+  for comment in comments_list:
+    if comment.startswith("*"):
+      paragraphs_for_dash.append(html.P(["* ",
+                                        html.Span(comment[1:], style={"fontStyle": "italic"})
+                                        ]))
+    else:
+      paragraphs_for_dash.append(html.P(comment))
+
+  return paragraphs_for_dash
