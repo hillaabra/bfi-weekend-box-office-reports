@@ -9,7 +9,7 @@ class DataPreparation:
 
 	@staticmethod
 	def format_gbp_currency(value: int) -> str:
-		str_value = str(value)
+		str_value = str(round(value))
 
 		def insert_commas(str_value, counter):
 			if len(str_value) <= 3:
