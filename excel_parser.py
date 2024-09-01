@@ -87,7 +87,7 @@ class ExcelParser:
         index_of_empty_row_after_new_releases_table = self.end_boundary_of_other_new_releases_table
         index_of_starting_row_of_new_releases_table = self.end_boundary_of_other_uk_films_table + 2 # this approach would have to be altered if the layout were to ever vary
         num_rows = index_of_empty_row_after_new_releases_table - index_of_starting_row_of_new_releases_table
-        df_other_new_releases = pd.read_excel(self.workbook, skiprows=index_of_starting_row_of_new_releases_table-1, nrows=num_rows, header=None, names=self.column_names)
+        df_other_new_releases = pd.read_excel(self.workbook, skiprows=index_of_starting_row_of_new_releases_table, nrows=num_rows, header=None, names=self.column_names)
         return df_other_new_releases
 
     @staticmethod
