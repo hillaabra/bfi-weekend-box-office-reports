@@ -2,7 +2,7 @@ import pandas as pd
 from dash import Dash, dash_table, dcc, html, Input, Output
 
 from dash_styling import create_paragraphs_from_list_of_comments, produce_dash_table_with_common_styling
-from utils import DataPreparation
+from data_preparation import DataPreparation
 from excel_parser import ExcelParser
 
 
