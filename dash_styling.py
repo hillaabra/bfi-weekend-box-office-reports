@@ -29,11 +29,13 @@ def produce_dash_table_with_common_styling(df):
 			{"if": {"column_id": "Film"}, "textAlign": "left"},
 			{"if": {"column_id": "Distributor"}, "textAlign": "left"},
 			{"if": {"column_id": "Country of Origin"}, "textAlign": "left"},
+      {"if": {"column_id": "Notes"}, "textAlign": "left"}
 		],
 		style_header_conditional=[
 			{"if": {"column_id": "Film"}, "textAlign": "left"},
 			{"if": {"column_id": "Distributor"}, "textAlign": "left"},
-			{"if": {"column_id": "Country of Origin"}, "textAlign": "left"}
+			{"if": {"column_id": "Country of Origin"}, "textAlign": "left"},
+      {"if": {"column_id": "Notes"}, "textAlign": "left"}
 		],
 		fixed_rows={"headers": True},
 	)
