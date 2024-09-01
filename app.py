@@ -1,3 +1,4 @@
+import pandas as pd
 from dash import Dash, dash_table, dcc, html, Input, Output
 
 from dash_styling import create_paragraphs_from_list_of_comments, produce_dash_table_with_common_styling
@@ -10,14 +11,13 @@ app = Dash()
 excel_report_pathway = "bfi-weekend-box-office-report-2024-08-16-18.xls" # decide how to handle this when automating
 excel_parser = ExcelParser(excel_report_pathway)
 data_preparer = DataPreparation()
-top15_df = excel_parser.top_15_df_with_notes_column
-top15_reformatted_df = data_preparer.restore_original_formatting(top15_df)
-UK_films_in_top15_df = excel_parser.filter_for_UK_films(top15_reformatted_df)
-new_releases_in_top15_df = excel_parser.filter_for_new_releases(top15_reformatted_df)
-other_uk_films_df = excel_parser.other_uk_films_df
-other_uk_films_reformatted_df = data_preparer.restore_original_formatting(other_uk_films_df)
-other_new_releases_df = excel_parser.other_new_releases_df
-other_new_releases_reformatted_df = data_preparer.restore_original_formatting(other_new_releases_df)
+top15_df = data_preparer.restore_original_formatting(excel_parser.top_15_df_with_notes_column)
+uk_films_in_top15_df = excel_parser.filter_for_UK_films(top15_df)
+new_releases_in_top15_df = excel_parser.filter_for_new_releases(top15_df)
+other_uk_films_df = data_preparer.restore_original_formatting(excel_parser.other_uk_films_df)
+all_uk_films_df = pd.concat([uk_films_in_top15_df, other_uk_films_df], ignore_index=True)
+other_new_releases_df = data_preparer.restore_original_formatting(excel_parser.other_new_releases_df)
+all_new_releases_df = pd.concat([new_releases_in_top15_df, other_new_releases_df], ignore_index=True)
 openers_next_week_df = excel_parser.openers_next_week_df
 
 
@@ -31,7 +31,9 @@ app.layout = html.Div(children=[
             {"label": "UK Films in the Top 15", "value": "uk-in-top-15"},
             {"label": "New Releases in the Top 15", "value": "new-releases-in-top-15"},
             {"label": "Other UK Films", "value": "other-uk-films"},
+						{"label": "All UK Films", "value": "all-uk-films"},
             {"label": "Other New Releases", "value": "other-new-releases"},
+						{"label": "All New Releases", "value": "all-new-releases"},
 						{"label": "Openers Next Week", "value": "openers-next-week"}
         ],
         value="top-15",
@@ -48,7 +50,7 @@ app.layout = html.Div(children=[
            """
 					 ),
 
-        produce_dash_table_with_common_styling(top15_reformatted_df),
+        produce_dash_table_with_common_styling(top15_df),
 
 				html.Div(id="comments", children=[
 						html.H3("""
@@ -70,7 +72,7 @@ app.layout = html.Div(children=[
         html.H2("""
             UK Films in the Top 15
         """),
-        produce_dash_table_with_common_styling(UK_films_in_top15_df)
+        produce_dash_table_with_common_styling(uk_films_in_top15_df)
     ], style={"display": "none"}
     ),
 
@@ -86,7 +88,15 @@ app.layout = html.Div(children=[
         html.H2("""
             Other UK Films
         """),
-        produce_dash_table_with_common_styling(other_uk_films_reformatted_df)
+        produce_dash_table_with_common_styling(other_uk_films_df)
+    ], style={"display": "none"}
+    ),
+
+		html.Div(id="all-uk-films", children=[
+        html.H2("""
+            All UK Films
+        """),
+        produce_dash_table_with_common_styling(all_uk_films_df)
     ], style={"display": "none"}
     ),
 
@@ -94,7 +104,15 @@ app.layout = html.Div(children=[
         html.H2("""
             Other New Releases
         """),
-        produce_dash_table_with_common_styling(other_new_releases_reformatted_df)
+        produce_dash_table_with_common_styling(other_new_releases_df)
+    ], style={"display": "none"}
+    ),
+
+		html.Div(id="all-new-releases", children=[
+        html.H2("""
+            All New Releases
+        """),
+        produce_dash_table_with_common_styling(all_new_releases_df)
     ], style={"display": "none"}
     ),
 
@@ -133,7 +151,9 @@ app.layout = html.Div(children=[
      Output("uk-in-top-15", "style"),
      Output("new-releases-in-top-15", "style"),
      Output("other-uk-films", "style"),
+		 Output("all-uk-films", "style"),
 		 Output("other-new-releases", "style"),
+		 Output("all-new-releases", "style"),
 		 Output("openers-next-week", "style")],
      [Input("div-selector", "value")]
 )
@@ -142,7 +162,9 @@ def toggle_dataset_visibility(selected_div) -> tuple:
 	ukintop15_style = {"display": "none"}
 	newreleasesintop15_style = {"display": "none"}
 	otherukfilms_style = {"display": "none"}
+	allukfilms_style = {"display": "none"}
 	othernewreleases_style = {"display": "none"}
+	allnewreleases_style = {"display": "none"}
 	openersnextweek_style = {"display": "none"}
 
 	if selected_div == "top-15":
@@ -153,12 +175,17 @@ def toggle_dataset_visibility(selected_div) -> tuple:
 			newreleasesintop15_style = {"display": "block"}
 	elif selected_div == "other-uk-films":
 			otherukfilms_style = {"display": "block"}
+	elif selected_div == "all-uk-films":
+			allukfilms_style = {"display": "block"}
 	elif selected_div == "other-new-releases":
 			othernewreleases_style = {"display": "block"}
+	elif selected_div == "all-new-releases":
+			allnewreleases_style = {"display": "block"}
 	elif selected_div == "openers-next-week":
 			openersnextweek_style = {"display": "block"}
 
-	return top15_style, ukintop15_style, newreleasesintop15_style, otherukfilms_style, othernewreleases_style, openersnextweek_style
+	return top15_style, ukintop15_style, newreleasesintop15_style, otherukfilms_style, allukfilms_style,\
+		  othernewreleases_style, allnewreleases_style, openersnextweek_style
 
 if __name__ == "__main__":
     app.run(debug=True)
