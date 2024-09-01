@@ -26,6 +26,7 @@ class ExcelParser:
       self.list_of_comments_on_top_15_result = self._read_comments_on_top_15_to_list()
       self.start_boundary_of_openers_next_week_table = self._find_start_of_openers_next_week_table()
       self.list_of_notes_on_top_15_table = self._read_notes_for_top_15_table_to_list()
+      self.openers_next_week_df = self._read_openers_next_week_table_to_df()
 
     def _read_top_15_table_to_df(self):
       df_top15 = pd.read_excel(self.workbook, header=1, nrows=15)
@@ -139,6 +140,14 @@ class ExcelParser:
              notes_list.append(self.excel_sheet.cell_value(row_index, 1)) # expects the value to be in column B
        return notes_list
 
+    def _read_openers_next_week_table_to_df(self) -> pd.DataFrame:
+        num_rows = self.excel_sheet.nrows - self.start_boundary_of_openers_next_week_table
+        df_openers_next_week = pd.read_excel(self.workbook, skiprows=self.start_boundary_of_openers_next_week_table + 1, \
+                                             nrows=num_rows, header=None, \
+                                             usecols=[1, 2, 4])
+        df_openers_next_week.columns = ["Film", "Country of Origin", "Distributor"]
+        return df_openers_next_week
+
     @staticmethod
     def filter_for_UK_films(df_top_15: pd.DataFrame) -> pd.DataFrame:
         """
@@ -158,4 +167,4 @@ if __name__ == "__main__":
    # print("Total Weekend Gross: ", excel_parser.total_top_15_weekend_gross)
    # print("Total Gross to date: ", excel_parser.total_top_15_gross_to_date)
    # print("Other UK Films df: ", excel_parser.other_uk_films_df)
-   print(excel_parser.list_of_notes_on_top_15_table)
+   print(excel_parser.openers_next_week_df)
