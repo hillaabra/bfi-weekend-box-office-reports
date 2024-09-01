@@ -10,7 +10,7 @@ app = Dash()
 excel_report_pathway = "bfi-weekend-box-office-report-2024-08-16-18.xls" # decide how to handle this when automating
 excel_parser = ExcelParser(excel_report_pathway)
 data_preparer = DataPreparation()
-top15_df = excel_parser.top_15_df
+top15_df = excel_parser.top_15_df_with_notes_column
 top15_reformatted_df = data_preparer.restore_original_formatting(top15_df)
 UK_films_in_top15_df = excel_parser.filter_for_UK_films(top15_reformatted_df)
 new_releases_in_top15_df = excel_parser.filter_for_new_releases(top15_reformatted_df)
@@ -19,7 +19,6 @@ other_uk_films_reformatted_df = data_preparer.restore_original_formatting(other_
 other_new_releases_df = excel_parser.other_new_releases_df
 other_new_releases_reformatted_df = data_preparer.restore_original_formatting(other_new_releases_df)
 openers_next_week_df = excel_parser.openers_next_week_df
-
 
 
 app.layout = html.Div(children=[
@@ -45,7 +44,7 @@ app.layout = html.Div(children=[
         """),
 
 				dcc.Markdown("""
-						*Note: 'Weekend Gross' figures will include Previews where applicable. See Comments section below for more detail.*
+						*Note: 'Weekend Gross' figures will include Previews where applicable. See Notes column for more details.*
            """
 					 ),
 
