@@ -12,8 +12,8 @@ class ExcelParser:
          print("This program is coded to run on xls files, not xlsx. Try downgrading the input file to xls first.")
       self.excel_sheet = self.workbook.sheet_by_index(0)
       self.report_heading = self.excel_sheet.cell_value(0, 0)
+      self.column_names = self._get_column_names()
       self.top_15_df = self._read_top_15_table_to_df()
-      self.column_names = self.top_15_df.columns
       self.total_top_15_weekend_gross = self._get_top_15_weekend_gross()
       self.total_top_15_gross_to_date = self._get_top_15_total_gross_to_date()
       self._check_for_change_in_footnotes_below_top_15_table() # to check layout is as expected before continuing to read second table
@@ -29,8 +29,17 @@ class ExcelParser:
       self.top_15_df_with_notes_column = self._supplement_top_15_df_with_notes_column()
       self.openers_next_week_df = self._read_openers_next_week_table_to_df()
 
+    def _get_column_names(self):
+       column_names = []
+       for col_ind in range(0, 10):
+          column_name = self.excel_sheet.cell_value(1, col_ind)
+          column_names.append(column_name)
+       return column_names
+
     def _read_top_15_table_to_df(self):
-      df_top15 = pd.read_excel(self.workbook, header=1, nrows=15)
+      df_top15 = pd.read_excel(self.workbook, header=1, nrows=15, usecols=range(10))
+      df_top15.columns = self.column_names
+      df_top15["% change on last week"] = df_top15["% change on last week"].apply(pd.to_numeric, errors="coerce")
       return df_top15
 
     def _get_top_15_weekend_gross(self) -> float:
@@ -75,7 +84,9 @@ class ExcelParser:
     def _read_other_uk_films_table_to_df(self) -> pd.DataFrame:
         index_of_empty_row_after_table = self.end_boundary_of_other_uk_films_table
         num_rows = index_of_empty_row_after_table - 21
-        df_other_uk_films = pd.read_excel(self.workbook, skiprows=21, nrows=num_rows, header=None, names=self.column_names)
+        df_other_uk_films = pd.read_excel(self.workbook, skiprows=21, nrows=num_rows, header=None, usecols=range(10))
+        df_other_uk_films.columns = self.column_names
+        df_other_uk_films["% change on last week"] = df_other_uk_films["% change on last week"].apply(pd.to_numeric, errors="coerce")
         return df_other_uk_films
 
     def _find_end_of_other_new_releases_table(self) -> int:
@@ -94,7 +105,9 @@ class ExcelParser:
         index_of_empty_row_after_new_releases_table = self.end_boundary_of_other_new_releases_table
         index_of_starting_row_of_new_releases_table = self.end_boundary_of_other_uk_films_table + 2 # this approach would have to be altered if the layout were to ever vary
         num_rows = index_of_empty_row_after_new_releases_table - index_of_starting_row_of_new_releases_table
-        df_other_new_releases = pd.read_excel(self.workbook, skiprows=index_of_starting_row_of_new_releases_table, nrows=num_rows, header=None, names=self.column_names)
+        df_other_new_releases = pd.read_excel(self.workbook, skiprows=index_of_starting_row_of_new_releases_table, nrows=num_rows, header=None, usecols=range(10))
+        df_other_new_releases.columns = self.column_names
+        df_other_new_releases["% change on last week"] = df_other_new_releases["% change on last week"].apply(pd.to_numeric, errors="coerce")
         return df_other_new_releases
 
     def _find_start_boundary_of_comments_on_top_15(self) -> int:
