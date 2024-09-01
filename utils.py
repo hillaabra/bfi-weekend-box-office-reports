@@ -1,14 +1,9 @@
 import pandas as pd
 import math
-import xlrd
-
 
 class DataPreparation:
 
-	def __init__(self, excel_report_filepath):
-		self.excel_report_filepath = excel_report_filepath
-		self.workbook = xlrd.open_workbook(excel_report_filepath)
-		self.report_heading = self.workbook.sheet_by_index(0).cell_value(0, 0)
+	def __init__(self):
 		self.gbp_value_columns = ['Weekend Gross', 'Site average', 'Total Gross to date']
 		self.percentage_value_columns = ["% change on last week"] # allowing for more to be added later on
 
@@ -49,26 +44,3 @@ class DataPreparation:
 		df_reformatted = self.restore_string_formatting_to_percentage_values(df_reformatted, self.percentage_value_columns)
 		df_reformatted.fillna("-", inplace=True)
 		return df_reformatted
-
-
-class Top15(DataPreparation):
-
-	def __init__(self, excel_report_filepath):
-		super().__init__(excel_report_filepath)
-
-	def read_table_to_df(self):
-		df_top15_raw = pd.read_excel(self.workbook, header=1, nrows=15)
-		return df_top15_raw
-
-	@staticmethod
-	def filter_for_UK_films(df_top_15: pd.DataFrame) -> pd.DataFrame:
-			"""
-					Returns dataframe of UK films in the top 15 for merging with the UK films dataset.
-			"""
-			mask = df_top_15["Country of Origin"].apply(lambda x: "UK" in x.split("/"))
-			return df_top_15[mask]
-
-	@staticmethod
-	def filter_for_new_releases(df_top_15: pd.DataFrame) -> pd.DataFrame:
-			mask = df_top_15["Weeks on release"] == 1
-			return df_top_15[mask]
