@@ -25,7 +25,7 @@ class ExcelParser:
       self.start_boundary_of_notes_on_top_15_section = self._find_start_boundary_of_notes_for_top_15_section()
       self.list_of_comments_on_top_15_result = self._read_comments_on_top_15_to_list()
       self.start_boundary_of_openers_next_week_table = self._find_start_of_openers_next_week_table()
-      self.list_of_notes_on_top_15_table = self._read_notes_for_top_15_table_to_list()
+      self.notes_on_top_15_table_df = self._read_notes_for_top_15_table_to_df()
       self.openers_next_week_df = self._read_openers_next_week_table_to_df()
 
     def _read_top_15_table_to_df(self):
@@ -140,6 +140,36 @@ class ExcelParser:
              notes_list.append(self.excel_sheet.cell_value(row_index, 1)) # expects the value to be in column B
        return notes_list
 
+    def _read_notes_for_top_15_table_to_df(self) -> pd.DataFrame:
+       films = []
+       notes = []
+
+       notes_list = self._read_notes_for_top_15_table_to_list()
+
+       for note in notes_list:
+          split_note = note.split(" - ")
+          film_and_distributor = split_note[0]
+          note = split_note[1]
+          pattern = r"^(.*?) \([^\)]+\)$"
+          match = re.match(pattern, film_and_distributor)
+          if match:
+             film = match.group(1)
+             if film not in films:
+                films.append(film)
+                notes.append(note)
+             else:
+                film_index_in_list = films.index(film)
+                notes[film_index_in_list] += "\n" + note
+          else:
+             raise ValueError("Regex not producing match. Check pattern.")
+
+       df_notes_on_top_15 = pd.DataFrame({
+          "Film": films,
+          "Notes": notes
+        })
+
+       return df_notes_on_top_15
+
     def _read_openers_next_week_table_to_df(self) -> pd.DataFrame:
         num_rows = self.excel_sheet.nrows - self.start_boundary_of_openers_next_week_table
         df_openers_next_week = pd.read_excel(self.workbook, skiprows=self.start_boundary_of_openers_next_week_table + 1, \
@@ -167,4 +197,4 @@ if __name__ == "__main__":
    # print("Total Weekend Gross: ", excel_parser.total_top_15_weekend_gross)
    # print("Total Gross to date: ", excel_parser.total_top_15_gross_to_date)
    # print("Other UK Films df: ", excel_parser.other_uk_films_df)
-   print(excel_parser.openers_next_week_df)
+   print(excel_parser.notes_on_top_15_table_df)
