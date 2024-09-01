@@ -17,6 +17,7 @@ class ExcelParser:
       self.total_top_15_weekend_gross = self._get_top_15_weekend_gross()
       self.total_top_15_gross_to_date = self._get_top_15_total_gross_to_date()
       self._check_for_change_in_footnotes_below_top_15_table() # to check layout is as expected before continuing to read second table
+      self.end_boundary_of_other_uk_films = self._find_end_of_other_uk_films_table()
       self.other_uk_films_df = self._read_other_uk_films_table_to_df()
 
     def _read_top_15_table_to_df(self):
@@ -63,7 +64,7 @@ class ExcelParser:
                  return row_index
 
     def _read_other_uk_films_table_to_df(self) -> pd.DataFrame:
-        index_of_empty_row_after_table = self._find_end_of_other_uk_films_table()
+        index_of_empty_row_after_table = self.end_boundary_of_other_uk_films
         num_rows = index_of_empty_row_after_table - 21
         df_other_uk_films = pd.read_excel(self.workbook, skiprows=21, nrows=num_rows, header=None, names=self.column_names)
         return df_other_uk_films
