@@ -21,6 +21,9 @@ class ExcelParser:
       self.end_boundary_of_other_new_releases_table = self._find_end_of_other_new_releases_table()
       self.other_uk_films_df = self._read_other_uk_films_table_to_df()
       self.other_new_releases_df = self._read_other_new_releases_table_to_df()
+      self.start_boundary_of_comments_on_top_15_section = self._find_start_boundary_of_comments_on_top_15()
+      self.start_boundary_of_notes_on_top_15_section = self._find_start_boundary_of_notes_for_top_15_section()
+      self.list_of_comments_on_top_15_result = self._read_comments_on_top_15_to_list()
 
     def _read_top_15_table_to_df(self):
       df_top15 = pd.read_excel(self.workbook, header=1, nrows=15)
@@ -90,6 +93,32 @@ class ExcelParser:
         df_other_new_releases = pd.read_excel(self.workbook, skiprows=index_of_starting_row_of_new_releases_table, nrows=num_rows, header=None, names=self.column_names)
         return df_other_new_releases
 
+    def _find_start_boundary_of_comments_on_top_15(self) -> int:
+       for row_index in range(self.end_boundary_of_other_new_releases_table, self.excel_sheet.nrows):
+         row = self.excel_sheet.row_values(row_index)
+         if "Comments on this week's top 15 results" in row:
+            return row_index + 1
+       raise ValueError("Expected to find header 'Comments on this week's top 15 results' in workbook sheet after\
+                       end of Other New Releases table. String not found in search of rows. Check document layout.")
+
+    def _find_start_boundary_of_notes_for_top_15_section(self) -> int:
+       for row_index in range(self.start_boundary_of_comments_on_top_15_section, self.excel_sheet.nrows):
+         row = self.excel_sheet.row_values(row_index)
+         if "Notes for Top 15 table:" in row:
+            return row_index
+       raise ValueError("Expected to find header 'Notes for Top 15 table:' in workbook sheet after\
+                       end of 'Comments on this week's top 15 results' section. String not found in search of rows. \
+                        Check document layout.")
+
+    def _read_comments_on_top_15_to_list(self) -> list:
+       row_index_section_start = self.start_boundary_of_comments_on_top_15_section
+       row_index_section_end = self.start_boundary_of_notes_on_top_15_section
+       notes_list = []
+       for row_index in range(row_index_section_start, row_index_section_end):
+          if self._check_for_empty_row(row_index) == False:
+             notes_list.append(self.excel_sheet.cell_value(row_index, 1)) # expects the value to be in column B
+       return notes_list
+
     @staticmethod
     def filter_for_UK_films(df_top_15: pd.DataFrame) -> pd.DataFrame:
         """
@@ -106,6 +135,7 @@ class ExcelParser:
 if __name__ == "__main__":
    #testing
    excel_parser = ExcelParser("bfi-weekend-box-office-report-2024-08-16-18.xls")
-   print("Total Weekend Gross: ", excel_parser.total_top_15_weekend_gross)
-   print("Total Gross to date: ", excel_parser.total_top_15_gross_to_date)
-   print("Other UK Films df: ", excel_parser.other_uk_films_df)
+   # print("Total Weekend Gross: ", excel_parser.total_top_15_weekend_gross)
+   # print("Total Gross to date: ", excel_parser.total_top_15_gross_to_date)
+   # print("Other UK Films df: ", excel_parser.other_uk_films_df)
+   print(excel_parser.start_boundary_of_notes_on_top_15_section)
