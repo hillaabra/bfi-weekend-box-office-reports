@@ -28,13 +28,22 @@
 * **Key Frameworks:** Pandas (for data extraction and pre-processing), Dash (for building the web application)
 
 ## Installation instructions
-After cloning this repository, get inside the bfi-weekend-box-office-reports directory and run `app.py` with the pathway to the BFI weekend box office excel report of your choosing, e.g.:
+* If getting the program running locally, open your terminal in a directory of your choosing and clone this repository:
+```
+$ git clone https://github.com/hillaabra/bfi-weekend-box-office-reports.git
+```
+* Get inside the directory and create a conda environment to install the required dependencies, e.g.:
 ```
 cd bfi-weekend-box-office-reports
 ```
 ```
-python app.py xls_file_pathway.xls
+$ conda env create -f env.yaml -n boxoffice
 ```
+* After activating the conda environment, run `app.py` on the command line with the pathway to the BFI weekend box office excel report of your choosing, e.g.:
+```
+$ python app.py xls_file_pathway.xls
+```
+* A message will be loaded to the command line telling you which http link Dash is running on, e.g. `http://127.0.0.1:8050/` - copy and paste this link to your browser of choice to view the app and start interacting with it.
 
 ## How it works
 * The program begins by parsing the Excel file provided to it in the command-line argument using methods defined in the `excel_parser` module.
@@ -62,3 +71,4 @@ python app.py xls_file_pathway.xls
 * Continue refactoring the code and make it more modular.
 * Continue testing the code and implementing more error handling.
 * Set up scheduled automation so that the program runs every week.
+* Ensure layout is responsive so that it can be used on different sized devices.
