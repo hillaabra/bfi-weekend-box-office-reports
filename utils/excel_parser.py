@@ -1,5 +1,4 @@
 import pandas as pd
-import math
 import re
 import xlrd
 
@@ -208,11 +207,3 @@ class ExcelParser:
     def filter_for_new_releases(df_top_15: pd.DataFrame) -> pd.DataFrame:
         mask = df_top_15["Weeks on release"] == 1
         return df_top_15[mask]
-
-if __name__ == "__main__":
-   #testing
-   excel_parser = ExcelParser("bfi-weekend-box-office-report-2024-08-16-18.xls")
-   # print("Total Weekend Gross: ", excel_parser.total_top_15_weekend_gross)
-   # print("Total Gross to date: ", excel_parser.total_top_15_gross_to_date)
-   # print("Other UK Films df: ", excel_parser.other_uk_films_df)
-   print(excel_parser.top_15_df_with_notes_column)
