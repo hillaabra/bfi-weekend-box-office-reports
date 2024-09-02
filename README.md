@@ -50,17 +50,17 @@ $ python app.py test-reports/bfi-weekend-box-office-report-2024-08-02-04.xls
 * The program prepares the data for presentation on the dashboard:
   * Parsing and adding the addended notes to the table
   * Reformatting GBP currency values and percentage values for easier comprehension (using the methods defined in the `data_prepration` module)
-* The program generates some new subsets of the tables and merges related datasets together as exlained above, so users can see all UK films in one place (whether coproduced with other territories or not), as well as all new releases.
+* The program generates some new subsets of the tables and merges related datasets together as explained above, so users can see all UK films in one place (whether coproduced with other territories or not), as well as all new releases.
 * The `dash_styling` module contains functions to generate template Dash html and table components.
 * The layout of the Dash app is defined in `app.py`, including a drop-down menu and callback visibility toggling function which enables the user to switch between datasets of their choosing.
 
 ## Why this adds value
 * The additional subsets, merges and cohesion of related data points make for a more intuitive interaction with the data, whether the user's interest is in the top 15 performing films, all UK films, or all new or upcoming releases.
-* The drop down-menu creates a user-driven interactive experience, since users to view different views or subsets of the data based on their specific needs.
+* The drop down-menu creates a user-driven interactive experience, since it enables users to view different views or subsets of the data based on their specific needs.
 * The new format lays a strong foundation for future enhancements to offer users greater flexibility with how they interact with, view, and download the data for analysis.
 
 ## How I would develop the app further
-* Look at BFI's existing workflow for its creation of the Excel reports to assess how to access the source data before it is written to the xls file (for a more robust program).
+* Look at BFI's existing workflow for its creation of the current Excel reports to assess how to access the source data before it is written to the xls file (for a more robust program).
 * Implement downloading functionality using Dash Core Components - providing options for csv and Excel downloads, as well as to download multiple datasets, or all.
 * Link a stylesheet - implement style from BFI Digital style bible.
 * Implement better "total gross" UI - and implement it for all subsets of data so whatever subset is seen on the screen with the revenue columns, the total values are updated for the subset on view.
