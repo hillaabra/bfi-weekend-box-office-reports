@@ -7,10 +7,14 @@ from utils.dash_styling import create_paragraphs_from_list_of_comments, produce_
 from utils.data_preparation import DataPreparation
 from utils.excel_parser import ExcelParser
 
+
 def parse_args():
-	parser = argparse.ArgumentParser(description="Launch Dash app to display contents of existing BFI weekend box office xls report.")
-	parser.add_argument("xls_file", type=str, help="Path to the XLS file to display. The XLS file must be in the format of the BFI's existing weekly weekend box office reports.")
+	parser = argparse.ArgumentParser(description="Launch Dash app to display contents \
+																	of existing BFI weekend box office xls report.")
+	parser.add_argument("xls_file", type=str, help="Path to the XLS file to display. \
+										 The XLS file must be in the format of the BFI's existing weekly weekend box office reports.")
 	return parser.parse_args()
+
 
 def main():
 	args = parse_args()
@@ -171,6 +175,7 @@ def main():
 							allnewreleases_style, openersnextweek_style
 
 	app.run_server(debug=True)
+
 
 if __name__ == "__main__":
     main()
