@@ -1,7 +1,6 @@
 # BFI Weekend Box Office Reporting
 
 ## Overview
-
 * This project transforms the British Film Institute's weekend box office reports into interactive web-based applications using Dash.
 * The existing reporting format for these weekly reports is Excel (`xls`). Each report contains:
   * A table with data about the top 15 films showing in the UK box office
@@ -39,9 +38,9 @@ cd bfi-weekend-box-office-reports
 ```
 $ conda env create -f env.yaml -n boxoffice
 ```
-* After activating the conda environment, run `app.py` on the command line with the pathway to the BFI weekend box office excel report of your choosing, e.g.:
+* After activating the conda environment, run `app.py` on the command line with the pathway to the BFI weekend box office excel report of your choosing, e.g. from the folder of test-reports included in the repository:
 ```
-$ python app.py xls_file_pathway.xls
+$ python app.py test-reports/bfi-weekend-box-office-report-2024-08-02-04.xls
 ```
 * A message will be loaded to the command line telling you which http link Dash is running on, e.g. `http://127.0.0.1:8050/` - copy and paste this link to your browser of choice to view the app and start interacting with it.
 
@@ -68,7 +67,7 @@ $ python app.py xls_file_pathway.xls
 * Make the app a one-stop shop for all historic weekend box office reports - datasets across reports should be linked. Within the app, users should be able to filter for time periods and to click on a film and access data on its whole run without having to manually join datasets from separate reports.
 * Continously work towards giving users more and more flexibility with how to access, view and download data - from filtering functionality (by country of origin, distributor, etc.) to interactive visualisations. (Implement one hot-encoding on the data for this.)
 * Depending on budget, link relevant filmographical detail from e.g. IMDB's API, to help end-users contextualise the revenue data (e.g. language of the film (whether English-language or foreign), production budget where available, and genre).
-* Continue refactoring the code and make it more modular.
+* Continue refactoring the code and make it more modular; also implement docstrings.
 * Continue testing the code and implementing more error handling.
 * Set up scheduled automation so that the program runs every week.
 * Ensure layout is responsive so that it can be used on different sized devices.
